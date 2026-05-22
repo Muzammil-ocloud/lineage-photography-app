@@ -1,0 +1,5 @@
+# Supabase CLI
+project_id = "oumbznqbtecfolgzmjla"
+
+[db]
+major_version = 15

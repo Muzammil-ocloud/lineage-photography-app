@@ -5,6 +5,7 @@ import { ROUTES } from "@/lib/constants/routes";
 import { profileService } from "@/services/profile.service";
 import { StudioProvider } from "@/providers/studio-provider";
 import { DashboardShell } from "@/components/layouts/dashboard-shell";
+import type { HeaderUser } from "@/components/shared/user-menu";
 
 export default async function DashboardGroupLayout({
   children,
@@ -26,9 +27,20 @@ export default async function DashboardGroupLayout({
     (user.user_metadata?.full_name as string | undefined) ?? null,
   );
 
+  const profile = await profileService.getProfile(user.id).catch(() => null);
+
+  const headerUser: HeaderUser = {
+    email: user.email ?? "",
+    fullName:
+      profile?.full_name ??
+      (user.user_metadata?.full_name as string | undefined) ??
+      null,
+    avatarUrl: profile?.avatar_url ?? null,
+  };
+
   return (
     <StudioProvider>
-      <DashboardShell>{children}</DashboardShell>
+      <DashboardShell user={headerUser}>{children}</DashboardShell>
     </StudioProvider>
   );
 }

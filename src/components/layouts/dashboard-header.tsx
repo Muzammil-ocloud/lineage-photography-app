@@ -4,12 +4,20 @@ import { Link, Plus } from "lucide-react";
 import { LineageLogo } from "@/components/brand/lineage-logo";
 import { useStudio } from "@/hooks/use-studio";
 import { StudioButton } from "@/components/studio/studio-button";
+import {
+  UserMenu,
+  type HeaderUser,
+} from "@/components/shared/user-menu";
 
-export function DashboardHeader() {
+interface DashboardHeaderProps {
+  user: HeaderUser;
+}
+
+export function DashboardHeader({ user }: DashboardHeaderProps) {
   const { openModal } = useStudio();
 
   return (
-    <header className="sticky top-0 z-30 flex h-[76px] items-center justify-between border-b border-black/80 bg-black px-6 text-white">
+    <header className="z-30 flex h-[76px] shrink-0 items-center justify-between border-b border-black/80 bg-black px-6 text-white">
       <div className="flex items-center gap-5">
         <LineageLogo variant="light" />
         <div className="hidden h-9 w-px bg-white/15 sm:block" />
@@ -22,7 +30,7 @@ export function DashboardHeader() {
           </p>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <StudioButton
           variant="dark"
           onClick={() => openModal("gallery")}
@@ -37,6 +45,7 @@ export function DashboardHeader() {
         >
           New Job
         </StudioButton>
+        <UserMenu user={user} />
       </div>
     </header>
   );

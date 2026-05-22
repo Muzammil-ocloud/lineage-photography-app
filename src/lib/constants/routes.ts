@@ -12,6 +12,7 @@ export const ROUTES = {
   galleries: "/galleries",
   photos: "/photos",
   settings: "/settings",
+  profile: "/profile",
 } as const;
 
 export const AUTH_ROUTES = [

@@ -25,7 +25,7 @@ export class AuthService {
     });
 
     if (error) throw new ApiError(error.message, 400);
-    return data;
+    return { user: data.user, session: data.session };
   }
 
   async logout() {

@@ -36,6 +36,7 @@ export async function updateProfileAction(
 
   try {
     await profileService.updateProfile(user.id, parsed.data);
+    revalidatePath(ROUTES.profile);
     revalidatePath(ROUTES.settings);
     revalidatePath(ROUTES.dashboard);
     return { success: "Profile updated successfully" };

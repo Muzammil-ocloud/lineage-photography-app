@@ -11,12 +11,14 @@ import { JobActionModal } from "@/components/studio/job-action-modal";
 import { StudioModal } from "@/components/studio/studio-modal";
 import { DashboardHeader } from "./dashboard-header";
 import { DashboardSidebar } from "./dashboard-sidebar";
+import type { HeaderUser } from "@/components/shared/user-menu";
 
 interface DashboardShellProps {
   children: ReactNode;
+  user: HeaderUser;
 }
 
-export function DashboardShell({ children }: DashboardShellProps) {
+export function DashboardShell({ children, user }: DashboardShellProps) {
   const {
     activeModal,
     closeModal,
@@ -46,11 +48,14 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const job = jobAction ? getJob(jobAction.jobId) : undefined;
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--lineage-bg)" }}>
-      <DashboardHeader />
-      <div className="flex">
+    <div
+      className="flex h-screen flex-col overflow-hidden"
+      style={{ background: "var(--lineage-bg)" }}
+    >
+      <DashboardHeader user={user} />
+      <div className="flex min-h-0 flex-1">
         <DashboardSidebar />
-        <main className="flex-1 p-4 md:p-8">
+        <main className="min-h-0 flex-1 overflow-y-auto p-4 md:p-8">
           <div className="mx-auto w-full max-w-[1280px]">{children}</div>
         </main>
       </div>

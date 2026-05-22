@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { ROUTES } from "@/lib/constants/routes";
 import { cn } from "@/lib/utils/cn";
-import { LogoutButton } from "@/components/shared/logout-button";
 
 const navItems = [
   { href: ROUTES.dashboard, label: "Dashboard", icon: LayoutDashboard },
@@ -38,13 +37,10 @@ export function DashboardSidebar() {
 
   return (
     <aside
-      className="hidden w-[248px] shrink-0 flex-col border-r bg-white md:flex"
-      style={{
-        borderColor: "var(--lineage-line)",
-        minHeight: "calc(100vh - 76px)",
-      }}
+      className="hidden h-full w-[248px] shrink-0 flex-col border-r bg-white md:flex"
+      style={{ borderColor: "var(--lineage-line)" }}
     >
-      <nav className="space-y-1 p-3">
+      <nav className="space-y-1 overflow-y-auto p-3">
         {navItems.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
@@ -73,12 +69,6 @@ export function DashboardSidebar() {
           Watermarks, expiry dates, download controls, and shared link activity
           live in Settings.
         </p>
-      </div>
-      <div
-        className="mt-auto border-t p-4"
-        style={{ borderColor: "var(--lineage-line)" }}
-      >
-        <LogoutButton />
       </div>
     </aside>
   );

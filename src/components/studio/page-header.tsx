@@ -15,6 +15,7 @@ const PAGE_SUBTITLES: Record<string, string> = {
   Photos: "Upload and review images by gallery.",
   Settings:
     "Studio defaults for privacy, watermarks, delivery, and notifications.",
+  Profile: "Update your name, bio, and avatar for this account.",
 };
 
 interface PageHeaderProps {

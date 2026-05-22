@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { ProfileRepository } from "@/repositories/profile.repository";
 import type { ProfileUpdateInput } from "@/validations/profile";
 import { ApiError } from "@/types/api";
@@ -39,7 +40,8 @@ export class ProfileService {
     email: string,
     fullName?: string | null,
   ): Promise<Profile> {
-    const repo = await this.getRepository();
+    // Service role bypasses missing grants during bootstrap; user RLS applies for normal CRUD.
+    const repo = new ProfileRepository(createAdminClient());
     const existing = await repo.findById(userId);
 
     if (existing) return existing;

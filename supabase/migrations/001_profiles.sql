@@ -12,19 +12,27 @@ create table if not exists public.profiles (
 -- Enable RLS
 alter table public.profiles enable row level security;
 
+-- Table grants (required for Supabase API access alongside RLS)
+grant usage on schema public to postgres, anon, authenticated, service_role;
+grant select, insert, update, delete on table public.profiles to authenticated;
+grant all on table public.profiles to service_role;
+
 -- Users can read their own profile
+drop policy if exists "Users can view own profile" on public.profiles;
 create policy "Users can view own profile"
   on public.profiles
   for select
   using (auth.uid() = id);
 
 -- Users can update their own profile
+drop policy if exists "Users can update own profile" on public.profiles;
 create policy "Users can update own profile"
   on public.profiles
   for update
   using (auth.uid() = id);
 
 -- Users can insert their own profile
+drop policy if exists "Users can insert own profile" on public.profiles;
 create policy "Users can insert own profile"
   on public.profiles
   for insert
@@ -42,14 +50,16 @@ begin
     new.id,
     new.email,
     coalesce(new.raw_user_meta_data ->> 'full_name', null)
-  );
+  )
+  on conflict (id) do nothing;
   return new;
 end;
 $$;
 
-create or replace trigger on_auth_user_created
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
   after insert on auth.users
-  for each row execute procedure public.handle_new_user();
+  for each row execute function public.handle_new_user();
 
 -- Updated_at trigger
 create or replace function public.handle_updated_at()
@@ -62,6 +72,7 @@ begin
 end;
 $$;
 
-create or replace trigger profiles_updated_at
+drop trigger if exists profiles_updated_at on public.profiles;
+create trigger profiles_updated_at
   before update on public.profiles
-  for each row execute procedure public.handle_updated_at();
+  for each row execute function public.handle_updated_at();

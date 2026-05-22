@@ -13,6 +13,7 @@ import {
 } from "@/validations/auth";
 import { ROUTES } from "@/lib/constants/routes";
 import { createClient } from "@/lib/supabase/server";
+import { getAuthErrorMessage } from "@/lib/utils/auth-error";
 
 export type AuthActionState = {
   error?: string;
@@ -45,9 +46,7 @@ export async function loginAction(
     redirect(ROUTES.dashboard);
   } catch (error) {
     if (isRedirectError(error)) throw error;
-    return {
-      error: error instanceof Error ? error.message : "Login failed",
-    };
+    return { error: getAuthErrorMessage(error, "Login failed") };
   }
 }
 
@@ -67,7 +66,7 @@ export async function signupAction(
   }
 
   try {
-    const { user } = await authService.signup(parsed.data);
+    const { user, session } = await authService.signup(parsed.data);
     if (user) {
       await profileService.ensureProfile(
         user.id,
@@ -75,14 +74,20 @@ export async function signupAction(
         parsed.data.fullName,
       );
     }
+
     revalidatePath("/", "layout");
+
+    if (session) {
+      redirect(ROUTES.dashboard);
+    }
+
     return {
-      success: "Account created! Check your email to confirm your account.",
+      error:
+        "Account created but sign-in failed. Disable “Confirm email” in Supabase (Authentication → Providers → Email), then try signing up again.",
     };
   } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : "Signup failed",
-    };
+    if (isRedirectError(error)) throw error;
+    return { error: getAuthErrorMessage(error, "Signup failed") };
   }
 }
 
@@ -108,9 +113,7 @@ export async function forgotPasswordAction(
     await authService.forgotPassword(parsed.data.email);
     return { success: "Password reset link sent to your email." };
   } catch (error) {
-    return {
-      error: error instanceof Error ? error.message : "Request failed",
-    };
+    return { error: getAuthErrorMessage(error, "Request failed") };
   }
 }
 
