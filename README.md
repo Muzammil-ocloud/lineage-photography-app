@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lineage Photography App
+
+Production-ready Next.js full-stack application with Supabase authentication, PostgreSQL database, and a scalable layered architecture.
+
+## Tech Stack
+
+- **Next.js 16** (App Router)
+- **TypeScript** (strict mode)
+- **Tailwind CSS v4**
+- **Supabase** (Auth + PostgreSQL + Storage-ready)
+- **React Hook Form** + **Zod**
+- **ESLint** + **Prettier**
+- **next-themes** (dark mode)
+- **Sonner** (toasts)
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Environment variables
+
+Copy `.env.example` to `.env.local` and fill in your Supabase credentials:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+### 3. Database setup
+
+Run the migration in `supabase/migrations/001_profiles.sql` via the Supabase SQL editor or CLI.
+
+### 4. Run the app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command             | Description                     |
+| ------------------- | ------------------------------- |
+| `npm run dev`       | Start development server        |
+| `npm run build`     | Production build                |
+| `npm run start`     | Start production server         |
+| `npm run lint`      | Run ESLint                      |
+| `npm run lint:fix`  | Fix ESLint issues               |
+| `npm run format`    | Format with Prettier            |
+| `npm run typecheck` | TypeScript check                |
+| `npm run check`     | Typecheck + lint + format check |
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+```
+Browser → Next.js App Router (RSC + Client Components)
+              ↓
+        Server Actions / API Routes
+              ↓
+           Services (business logic)
+              ↓
+        Repositories (data access)
+              ↓
+        Supabase Client (Auth + PostgreSQL)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Supabase is used only for:** Authentication, PostgreSQL, and Storage (future). All backend logic runs in Next.js API routes and server actions — no Edge Functions.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Folder Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── (auth)/          # Login, signup, password reset
+│   ├── (dashboard)/     # Protected dashboard + profile
+│   ├── api/             # Route handlers (auth, users, profile)
+│   └── actions/         # Server actions
+├── components/
+│   ├── ui/              # Button, Input, Card, Skeleton...
+│   ├── forms/           # Auth & profile forms
+│   ├── layouts/         # Marketing, auth, dashboard layouts
+│   └── shared/          # Theme toggle, empty states
+├── lib/
+│   ├── supabase/        # Browser, server, admin, middleware clients
+│   ├── api/             # Response helpers, error handler, auth guard
+│   └── constants/       # Route constants
+├── services/            # Business logic layer
+├── repositories/        # Database access layer
+├── validations/         # Shared Zod schemas
+├── types/               # Database & API types
+├── hooks/               # Client hooks
+├── providers/           # Theme & toast providers
+└── styles/              # Global CSS
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Auth Flow
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. User signs up/logs in via server actions → Supabase Auth
+2. Middleware refreshes session cookies on every request
+3. Protected routes (`/dashboard`, `/profile`) redirect unauthenticated users to `/login`
+4. Auth routes redirect authenticated users to `/dashboard`
+5. Profile auto-created on first login via service layer + DB trigger
+
+## API Routes
+
+| Method    | Route               | Description            |
+| --------- | ------------------- | ---------------------- |
+| GET       | `/api/auth/session` | Current session        |
+| POST      | `/api/auth/logout`  | Logout                 |
+| GET       | `/api/users/me`     | Current user + profile |
+| GET/PATCH | `/api/profile`      | Profile CRUD           |

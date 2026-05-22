@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  --lineage-gold: #bfa35a;
+  --lineage-ink: #080b14;
+  --lineage-muted: #667085;
+  --lineage-bg: #f6f7f9;
+  --lineage-line: #e6e8ee;
+  --lineage-sidebar-active: #090d1a;
+  --lineage-gold-btn: #c3a85d;
+  --lineage-gold-btn-hover: #d2b867;
+}
+
+@theme inline {
+  --color-lineage-gold: var(--lineage-gold);
+  --color-lineage-ink: var(--lineage-ink);
+  --color-lineage-muted: var(--lineage-muted);
+  --color-lineage-bg: var(--lineage-bg);
+  --color-lineage-line: var(--lineage-line);
+  --font-serif: var(--font-cormorant);
+  --font-sans: var(--font-geist-sans);
+}
+
+body {
+  background: var(--lineage-bg);
+  color: var(--lineage-ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
