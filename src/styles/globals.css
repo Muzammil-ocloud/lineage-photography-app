@@ -26,3 +26,29 @@ body {
   color: var(--lineage-ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
+
+/* Pointer cursor for interactive controls */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+a[href],
+label[for],
+label:has(input[type="file"]),
+label:has(input[type="checkbox"]),
+label:has(input[type="radio"]),
+select:not(:disabled),
+summary,
+input[type="submit"]:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="reset"]:not(:disabled),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+[tabindex]:not([tabindex="-1"]):not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+select:disabled,
+input:disabled {
+  cursor: not-allowed;
+}
